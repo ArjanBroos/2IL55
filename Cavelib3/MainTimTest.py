@@ -37,159 +37,60 @@ import viztask
 
 
 class CustomCaveApplication(caveapp.CaveApplication):
-	"""A custom CAVE application.
-	
-	You can choose to use or not use this object oriented construct.
-	It is also possible to use cavelib3 without the caveapp.CaveApplication class.
-	
-	Note that this example application is intended to make things simple.
-	It says ``intended`` ecause the object oriented layer may be confusing.
-	Have a look at caveapp.py This will make things more clear.
-	
-	In python, if you redefine a function in a subclass, this function is virtual by default.
-	The function in the subclass will be called instead of the function in the super class.
-	
-	If you think that caveapp.py can be improved upon, you can do so.
-	Strictly caveapp.py is not part of the cavelib3.
-	You should not have to alter the cavelib itself though.
-	
-	This construct is given as an example.
-	Usually, people use vizard by using lots of callbacks.
-	These callbacks, have an exectution order.
-	Usually these exectution orders are not considered when writing an application, thereby introducing bugs.
-	
-	When using this class, you do not need to use any callbacks.
-	There is just one __onUpdate function which gets called in caveapp.CaveApplication
-	This call is distributed over several other calls of which the order is transparent.
-	
-	Another pitfall in vizard is automatic linking (of simulation objects).
-	Instead of using link constructs, it is more transparent to set the world poses of objects at each frame.
-	See updateObjects.
-	
-	A problem that arises with automatic linking of simulation objects is that links can have priorities.
-	Priorities can be too low, causing the link to disfunction.
-	
-	If you have a conflicting transformation within the updateObjects function, then it is clear that only the last assignment will be used.
-	Vizard wants to take care of many things, that is why it uses the link mechanism.
-	However, other simulation tools usually do not have this.	
-	In general, a simulation has an initialization function, an update function and a render function.
-	This construct allows the user to initilialize and to update. Rendering is done automatically by vizard (after each update)(this is okay).
-	"""
-	
-		
+
 	def __init__(self,use_keyboard = True, desktop_mode = False):
-		"""Initialization function."""
 		
 		caveapp.CaveApplication.__init__(self,desktop_mode) #call constructor of super class, you have to do this explicitly in Python		
 		
-		self.wand = vizshape.addAxes()#load axis model to represent the wand
-	#	self.thing = viz.addChild('axe.OSGB') #load plant model to represent the thing      plant.osgb
-	
+		self.wand = vizshape.addAxes() #load axis model to represent the wand (WALL FFS!)
+		
+		# Function for swinging the axes
 		def swing(object, t, startAngle, endAngle):
 			d = (math.sin(t[0]) + 1.0) / 2.0
 			angle = startAngle + d * (endAngle - startAngle)
 			object.setEuler([90,0,angle])
 			t[0] += 0.03
-			
-		self.axe = viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE)
-		self.axe.setPosition([700,745,325],viz.REL_LOCAL)
-		self.axe.setScale(225,225,325)
-		self.axe.center(0,4.5,0)
-		axe1t = [0.0]
-		vizact.ontimer(0.03, swing, self.axe, axe1t, 120, 240)
 		
+		# Add axes
+		nrAxes = 5
+		axes = []
+		axest = []
+		for i in range(nrAxes):
+			axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
+			axes[i].setPosition([500*i,745,325], viz.REL_LOCAL)
+			axes[i].setScale(225,225,325)
+			axes[i].center(0,4.5,0)
+			axest.append([float(i)])
+			vizact.ontimer(0.03, swing, axes[i], axest[i], 120, 240)
 		
-		self.axe2 = viz.addChild('axe.OSGB') #load a horse model (this model will be animated in cave space)
-		#self.axe2.setPosition([700,745,325],viz.REL_LOCAL)
-		self.axe2.setEuler([90,0,180])
-		#self.axe2.setScale(225,225,325)
-		self.axe2.center(0,4.5,0)
-		#self.axe2.addAction(vizact.spin(0,0,1,60,viz.FOREVER))
-		
-		self.axe3 = viz.addChild('axe.OSGB') #load a horse model (this model will be animated in cave space)
-		self.axe3.setPosition([1800,745,325],viz.REL_LOCAL)
-		self.axe3.setEuler([90,0,0])
-		self.axe3.setScale(225,225,325)
-		self.axe3.center(0,4.5,0)
-		self.axe3.addAction(vizact.spin(0,0,1,75,viz.FOREVER))
-		
-		self.axe4 = viz.addChild('axe.OSGB') #load a horse model (this model will be animated in cave space)
-		self.axe4.setPosition([1800,745,325],viz.REL_LOCAL)
-		self.axe4.setEuler([90,0,180])
-		self.axe4.setScale(225,225,325)
-		self.axe4.center(0,4.5,0)
-		self.axe4.addAction(vizact.spin(0,0,1,75,viz.FOREVER))
-		
-		self.axe5 = viz.addChild('axe.OSGB') #load a horse model (this model will be animated in cave space)
-		self.axe5.setPosition([2700,745,325],viz.REL_LOCAL)
-		self.axe5.setEuler([90,0,0])
-		self.axe5.setScale(225,225,325)
-		self.axe5.center(0,4.5,0)
-		self.axe5.addAction(vizact.spin(0,0,1,80,viz.FOREVER))
-		
-		self.axe6 = viz.addChild('axe.OSGB') #load a horse model (this model will be animated in cave space)
-		self.axe6.setPosition([2700,745,325],viz.REL_LOCAL)
-		self.axe6.setEuler([90,0,180])
-		self.axe6.setScale(225,225,325)
-		self.axe6.center(0,4.5,0)
-		self.axe6.addAction(vizact.spin(0,0,1,80,viz.FOREVER))
-		
+		# Add ducky
 		newduck = viz.addAvatar('duck.cfg')
 		newduck.setScale([170,170,170])
-
-		#Place the new duck on the x-axis.
-		#Each time the script goes through the loop, "eachnumber"
-		#will be one larger so the ducks will fall in a line
-		#along the x-axis
 		newduck.setPosition([3700,65,325],viz.REL_LOCAL)
 		newduck.setEuler([-90,0,0])
 
-		
+		# Add proximity sensors
 		manager = vizproximity.Manager()
 		target = vizproximity.Target(viz.MainView)
 		manager.addTarget(target)
-		sensor = vizproximity.addBoundingBoxSensor(self.axe)
-		manager.addSensor(sensor)
-		sensor2 = vizproximity.addBoundingBoxSensor(self.axe2)
-		manager.addSensor(sensor2)
-		sensor3 = vizproximity.addBoundingBoxSensor(self.axe3)
-		manager.addSensor(sensor3)
-		sensor4 = vizproximity.addBoundingBoxSensor(self.axe4)
-		manager.addSensor(sensor4)
-		sensor5 = vizproximity.addBoundingBoxSensor(self.axe5)
-		manager.addSensor(sensor5)
-		sensor6 = vizproximity.addBoundingBoxSensor(self.axe6)
-		manager.addSensor(sensor6)
+		sensors = []
+		for i in range(nrAxes):
+			sensors.append(vizproximity.addBoundingBoxSensor(axes[i]))
+			manager.addSensor(sensors[i])
 		duckSensor = vizproximity.addBoundingBoxSensor(newduck,scale=(2.5,2.5,2.5))
 		manager.addSensor(duckSensor)
 		
-		#Boolean variables to store trial results
-		self.haxe = 0
-		self.haxe2 = 0
-		self.haxe3 = 0
-		self.haxe4 = 0
-		self.haxe5 = 0
-		self.haxe6 = 0
+		# Boolean variables to store trial results
+		axesHit = []
+		for i in range(nrAxes):
+			axesHit.append(0)
 		
+		# Called when we enter a proximity
 		def EnterProximity(e):
-			if e.sensor == sensor:
-				self.haxe +=1
-				print 'Hit first (total: ',self.haxe,' times)'
-			elif e.sensor == sensor2:
-				self.haxe2 +=1
-				print 'Hit second (total: ',self.haxe2,' times)'
-			elif e.sensor == sensor3:
-				self.haxe3 +=1
-				print 'Hit third (total: ',self.haxe3,' times)'
-			elif e.sensor == sensor4:
-				self.haxe4 +=1
-				print 'Hit fourth (total: ',self.haxe4,' times)'
-			elif e.sensor == sensor5:
-				self.haxe5 +=1
-				print 'Hit fifth (total: ',self.haxe5,' times)'
-			elif e.sensor == sensor6:
-				self.haxe6 +=1
-				print 'Hit sixth (total: ',self.haxe6,' times)'
+			for i in range(nrAxes):
+				if e.sensor == sensors[i]:
+					axesHit[i] += 1
+					print "Hit axe #" + str(i) + " " + str(axesHit[i]) + " times!"
 		
 		manager.onEnter(None,EnterProximity)
 		
@@ -215,54 +116,23 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			elapsedTime = viz.tick() - startTime
 			elapsedTime = str(round(elapsedTime,2))
 			
+			# When finished
 			yield vizproximity.waitEnter(duckSensor)
 			instructions.runAction(Show)
-			instructions.setText("Thank you for your participation.\nYou hit the following axis; number of times: "+str(self.haxe)+', '+str(self.haxe2)+', '+str(self.haxe3)+', '+str(self.haxe4)+', '+str(self.haxe5)+', '+str(self.haxe6)+"\nTime is: "+str(elapsedTime))
+			yayString = "Thank you for your participation.\nYou hit the axes this many times: " + str(axesHit[0])
+			for i in range(1, nrAxes):
+				yayString += ", " + str(axesHit[i])
+			yayString += ".\nTime is: " + str(elapsedTime)
+			instructions.setText(yayString)
 			#Show results of experiment
-			print 'Hit axes following number of times: ',self.haxe,', ',self.haxe2,', ',self.haxe3,', ',self.haxe4,', ',self.haxe5,', ',self.haxe6
+			print yayString
 
 		viztask.schedule(destinationsTask())
-		
-		
-#		#Change state of avatar to talking when the user gets near
-#		def EnterProximity(e):
-#			avatar.state(4)
-#
-#		#Change state of avatar to idle when the user moves away
-#		def ExitProximity(e):
-#			avatar.state(1)
-#
-#		manager.onEnter(sensor,EnterProximity)
-#		manager.onExit(sensor,ExitProximity)
 		   
 		vizact.onkeydown('g',manager.setDebug,viz.TOGGLE)  
 		
-		#Add an object.
-		#object = viz.add('wheelbarrow.ive')
-		#Change the center of the object to 1m away from the origin.
-		#object.center( 1, 0, 0 )
-		#Spin the object around the new center.
-		#object.addAction( vizact.spin(0,1,0,90) ) 
-		
-		#Add a parent.
-		parent = viz.add( 'wheelbarrow.ive' )
-		#Add a child to that parent.
-		child = parent.add( 'duck.wrl' )
-		#Set the position of the child.
-		child.setPosition( 0,.35, -.05, viz.ABS_PARENT )
-		#Spin the parent around in a circle.
-		parent.center(1,0,0)
-		parent.addAction(vizact.spin(0,1,0,90,viz.FOREVER)) 
-		
-	#	self.axe.color(0.5,0.5,0.5)#make the horse gray
-		
-	#	self.horse.disable(viz.LIGHTING) #disable the shading of the horse
-		
 		self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
 		self.worldModel.setScale(1,.3,1.5)
-		
-	#	self.headLight = viz.MainView.getHeadLight() #disable the headlight
-	#	self.headLight.disable() #the headlight is disabled because the piazza.osgb is already shaded
 		
 		self.use_keyboard = use_keyboard #store if we want to use the keyboard
 		
