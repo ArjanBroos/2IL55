@@ -11,30 +11,9 @@ import vizinfo
 import vizproximity 
 import viztask
 
-#x = -left/+right
-#y = -below/+above
-#z = -behind/+in front
-
-################################################################
-#Placement of objects
-################################################################
-
-#object.method(x, y, z)
-
-#object = viz.add("map/file.ext")							#Add object to scene
-#object.setAxisAngle(0, 1, 0, 90)							#Set the direction of an object
-#object.texture(viz.addTexture("textureMap/img.ext")) 		#Connect a texture to an object (.mtl file with the same name pastes the material over the object by itself)
-#object.addAction(vizact.spin(0, 1, 0, 20))					#Arguments (x, y, z, speed), a negative number is used to spin in the opposite direction
-#object.setScale(0.5, 0.5, 0.5)								#Scaling the object for each specific axis
-#object.setPosition(0,2,0)									#Set the position of the object
-
-
 ################################################################
 #Code, with respect to she functionality should be in here
 ################################################################
-
-
-
 
 class CustomCaveApplication(caveapp.CaveApplication):
 
@@ -57,7 +36,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		axest = []
 		for i in range(nrAxes):
 			axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
-			axes[i].setPosition([500*i,745,325], viz.REL_LOCAL)
+			axes[i].setPosition([i*(2800/nrAxes),745,325], viz.REL_LOCAL)
 			axes[i].setScale(225,225,325)
 			axes[i].center(0,4.5,0)
 			axest.append([float(i)])
@@ -112,7 +91,6 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			instructions.setText("Go to the duck, try to evade the axes.")
 			instructions.runAction(DelayHide)
 			
-			
 			elapsedTime = viz.tick() - startTime
 			elapsedTime = str(round(elapsedTime,2))
 			
@@ -136,12 +114,10 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		self.use_keyboard = use_keyboard #store if we want to use the keyboard
 		
-		
 		self.time = 0.0 #note that to 0.0 is important because it is a double precision floating point number
 		#the variable above will be used to keep track of time
 		#there may be a difference between the vizard clock and self.time
 		#could be rounding error, could be something else
-		
 		
 		self.speed = 400.0 #--four-- meters per second
 		originTracker = self.cavelib.getOriginTracker()
@@ -167,38 +143,9 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		#there is also no reason why the statement below is in this function and not in preUpdate
 		self.time += elapsed
 		
-		
-		#where is the horse located in the cave?
-#		axe_position_in_cave_space = viz.Vector(math.cos(self.time), 1, math.sin(self.time))
-		
-		#convert the location (without orientation and scale) into a translation matrix
-		#(having default orientation and scale)
-#		axe_matrix_in_cave_space = viz.Transform.translate(axe_position_in_cave_space)
-		
-		#rotate the horse
-		#note that pre euler is used
-		#this means first rotate and than apply the translation transformation
-#		axe_matrix_in_cave_space.preEuler(self.time / math.pi * -180.0,0,0)
-		
-		#convert the horse matrix to world space and assign it to the model
-		
-#		self.axe.setMatrix(self.cavelib.localMatrixToWorld(axe_matrix_in_cave_space))
-		
 		#set the wand (i.e. one of the trackers NOT the wiimote)		
 		#the wand is viewed as a coordinate system
 		self.wand.setMatrix(self.cavelib.localMatrixToWorld(self.cavelib.getWandMatrix()))
-		
-		#set the thing
-		#the thing is the plant model
-		#its motion is defined by the second tracker
-	#	self.thing.setMatrix(self.cavelib.localMatrixToWorld(self.cavelib.getThingMatrix()))
-		
-		
-		#print str(self.cavelib.getBalanceBoard(self.cavelib.BALANCE_BOARD_BOTTOM_LEFT)) + " " ,
-		#print str(self.cavelib.getBalanceBoard(self.cavelib.BALANCE_BOARD_BOTTOM_RIGHT)) + " " ,
-		#print str(self.cavelib.getBalanceBoard(self.cavelib.BALANCE_BOARD_TOP_LEFT)) + " " ,
-		#print str(self.cavelib.getBalanceBoard(self.cavelib.BALANCE_BOARD_TOP_RIGHT)) + " " ,
-		#print str(self.cavelib.getBalanceBoard(self.cavelib.BALANCE_BOARD_TOTAL))		
 		
 	def preUpdate(self,e):
 		"""This function is executed before the updates are done."""
@@ -259,9 +206,6 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		If this function is omitted, the wiimote will always be used.
 		"""
 		if self.use_keyboard:
-			
-			#keyboard input
-			
 			result = [0.0,0.0,0.0]
 			
 			if viz.iskeydown('a'): 
@@ -302,24 +246,9 @@ class CustomCaveApplication(caveapp.CaveApplication):
 print "Constructing the application class."
 application = CustomCaveApplication(use_keyboard=True, desktop_mode=True) #boolean indicated wheter or not to use the keyboard instead of the wiimote
 
-print "Setting the number of samples per pixel."
-
-#Add ambient sound
-piazzaSound = viz.addAudio('piazza.mp3')
-#piazzaSound.play()
-#piazzaSound.loop()
-
-
 viz.setMultiSample(4)
 viz.MainWindow.fov(60)
 #viz.collision(viz.ON)
-
-#viz.MainView.move([31,0,-71])
-#viz.MainView.setEuler([0,30,0])
-#import vizshape
-#vizshape.addAxes()
-
-
 
 application.go()
 
