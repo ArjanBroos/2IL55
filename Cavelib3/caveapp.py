@@ -24,6 +24,7 @@ class CaveApplication(viz.EventClass):
 		
 		self.yaw = 0 #keep track of the yaw of the cave origin
 		self.pitch = 0#keep track of the pitch (not modified within this class)
+		self.pitchDelta = 90
 		self.yawDelta = 90 #90 degrees per second
 		self.speed = 4.0 #four meters per second
 		
@@ -86,6 +87,10 @@ class CaveApplication(viz.EventClass):
 			originTracker.setPosition([0,0,-self.speed * elapsed],viz.REL_LOCAL)
 			
 		self.yaw = self.yaw + self.yawDelta * self.joystick()[0] * elapsed
+		self.pitch = self.pitch + self.pitchDelta * self.joystick()[1] * elapsed
+		
+		originTracker.setPosition([0,self.joystick()[2] * elapsed * self.speed,0],viz.REL_LOCAL)
+		
 	
 		originTracker.setEuler([self.yaw,self.pitch,0])
 		
