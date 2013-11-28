@@ -85,25 +85,26 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.wand = vizshape.addAxes()#load axis model to represent the wand
 	#	self.thing = viz.addChild('axe.OSGB') #load plant model to represent the thing      plant.osgb
 	
-		def swing(object, t, startAngle, endAngle)
-			d = sin(t)
+		def swing(object, t, startAngle, endAngle):
+			d = (math.sin(t[0]) + 1.0) / 2.0
 			angle = startAngle + d * (endAngle - startAngle)
-			object.setEuler([0,0,angle])
+			object.setEuler([90,0,angle])
+			t[0] += 0.03
 			
-		self.axe = viz.addChild('axe.OSGB') #load a horse model (this model will be animated in cave space)
+		self.axe = viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE)
 		self.axe.setPosition([700,745,325],viz.REL_LOCAL)
-		self.axe.setEuler([90,0,0])
 		self.axe.setScale(225,225,325)
 		self.axe.center(0,4.5,0)
-		self.axe.addAction(vizact.spin(0,0,1,60,viz.FOREVER))
+		axe1t = [0.0]
+		vizact.ontimer(0.03, swing, self.axe, axe1t, 120, 240)
 		
 		
 		self.axe2 = viz.addChild('axe.OSGB') #load a horse model (this model will be animated in cave space)
-		self.axe2.setPosition([700,745,325],viz.REL_LOCAL)
+		#self.axe2.setPosition([700,745,325],viz.REL_LOCAL)
 		self.axe2.setEuler([90,0,180])
-		self.axe2.setScale(225,225,325)
+		#self.axe2.setScale(225,225,325)
 		self.axe2.center(0,4.5,0)
-		self.axe2.addAction(vizact.spin(0,0,1,60,viz.FOREVER))
+		#self.axe2.addAction(vizact.spin(0,0,1,60,viz.FOREVER))
 		
 		self.axe3 = viz.addChild('axe.OSGB') #load a horse model (this model will be animated in cave space)
 		self.axe3.setPosition([1800,745,325],viz.REL_LOCAL)
