@@ -19,9 +19,11 @@ class CustomCaveApplication(caveapp.CaveApplication):
 
 	def __init__(self,use_keyboard = True, desktop_mode = False):
 		
-		caveapp.CaveApplication.__init__(self,desktop_mode) #call constructor of super class, you have to do this explicitly in Python		
+		caveapp.CaveApplication.__init__(self,desktop_mode) #call constructor of super class, you have to do this explicitly in Python
 		
-		self.wand = vizshape.addAxes() #load axis model to represent the wand (WALL FFS!)
+		sky = viz.add(viz.ENVIRONMENT_MAP,'sky.jpg')
+		skybox = viz.add('skydome.dlc')
+		skybox.texture(sky)
 		
 		# Function for swinging the axes
 		def swing(object, t, startAngle, endAngle):
@@ -31,7 +33,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			t[0] += 0.03
 		
 		# Add axes
-		nrAxes = 5
+		nrAxes = 8
 		axes = []
 		axest = []
 		for i in range(nrAxes):
@@ -126,7 +128,6 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		originTracker.setPosition([-100,100,200],viz.REL_LOCAL)
 		self.yaw = 90
 		
-		
 	def updateObjects(self,e):
 		"""Set the world poses of the objects
 		
@@ -144,10 +145,6 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		#there is no reason to prefer one time variable/function over the other
 		#there is also no reason why the statement below is in this function and not in preUpdate
 		self.time += elapsed
-		
-		#set the wand (i.e. one of the trackers NOT the wiimote)		
-		#the wand is viewed as a coordinate system
-		self.wand.setMatrix(self.cavelib.localMatrixToWorld(self.cavelib.getWandMatrix()))
 		
 	def preUpdate(self,e):
 		"""This function is executed before the updates are done."""
@@ -250,6 +247,7 @@ application = CustomCaveApplication(use_keyboard=True, desktop_mode=True) #boole
 
 viz.setMultiSample(4)
 viz.MainWindow.fov(60)
+viz.clearcolor(viz.SKYBLUE)
 #viz.collision(viz.ON)
 
 application.go()
