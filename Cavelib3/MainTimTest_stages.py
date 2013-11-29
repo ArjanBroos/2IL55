@@ -22,7 +22,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		caveapp.CaveApplication.__init__(self,desktop_mode) #call constructor of super class, you have to do this explicitly in Python		
 		self.wand = vizshape.addAxes() #load axis model to represent the wand (WALL FFS!)
 		
-		sky = viz.add(viz.ENVIRONMENT_MAP,'sky.jpg')
+		sky = viz.add(viz.ENVIRONMENT_MAP,'alien/jajalien1.jpg')
 		skybox = viz.add('skydome.dlc')
 		skybox.texture(sky)
 		
