@@ -20,9 +20,21 @@ class CustomCaveApplication(caveapp.CaveApplication):
 	def __init__(self,use_keyboard = True, desktop_mode = False):
 		
 		caveapp.CaveApplication.__init__(self,desktop_mode) #call constructor of super class, you have to do this explicitly in Python		
-		
 		self.wand = vizshape.addAxes() #load axis model to represent the wand (WALL FFS!)
 		
+		sky = viz.add(viz.ENVIRONMENT_MAP,'sky.jpg')
+		skybox = viz.add('skydome.dlc')
+		skybox.texture(sky)
+		
+		self.use_keyboard = use_keyboard #store if we want to use the keyboard
+		self.time = 0.0 #note that to 0.0 is important because it is a double precision floating point number
+		
+		self.speed = 400.0 #--four-- meters per second
+		originTracker = self.cavelib.getOriginTracker()
+		originTracker.setPosition([-100,100,200],viz.REL_LOCAL)
+		self.yaw = 90
+		
+	def stageAxes(self, NAxes):
 		# Function for swinging the axes
 		def swing(object, t, startAngle, endAngle):
 			d = (math.sin(t[0]) + 1.0) / 2.0
@@ -31,7 +43,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			t[0] += 0.03
 		
 		# Add axes
-		nrAxes = 5
+		nrAxes = NAxes
 		axes = []
 		axest = []
 		for i in range(nrAxes):
@@ -112,18 +124,13 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
 		self.worldModel.setScale(1,.3,1.5)
 		
-		self.use_keyboard = use_keyboard #store if we want to use the keyboard
 		
-		self.time = 0.0 #note that to 0.0 is important because it is a double precision floating point number
-		#the variable above will be used to keep track of time
-		#there may be a difference between the vizard clock and self.time
-		#could be rounding error, could be something else
-		
-		self.speed = 400.0 #--four-- meters per second
-		originTracker = self.cavelib.getOriginTracker()
-		originTracker.setPosition([-100,100,200],viz.REL_LOCAL)
-		self.yaw = 90
-		
+	def experiment(self):
+		yield viztask.waitTime(5)
+		yield self.stageAxes(4)
+		yield self.stageAxes(6)
+		yield self.stageAxes(8)
+		yield self.stageAxes(10)
 		
 	def updateObjects(self,e):
 		"""Set the world poses of the objects
@@ -134,14 +141,14 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		#the delta time that has passed
 		#you can use this value to advance your simulation
-		elapsed = e.elapsed 
+	#	elapsed = e.elapsed 
 		
 		#keep track of time	
 		#this is just some time measurement
 		#vizard probably has some clock function
 		#there is no reason to prefer one time variable/function over the other
 		#there is also no reason why the statement below is in this function and not in preUpdate
-		self.time += elapsed
+	#	self.time += elapsed
 		
 		#set the wand (i.e. one of the trackers NOT the wiimote)		
 		#the wand is viewed as a coordinate system
@@ -252,3 +259,4 @@ viz.MainWindow.fov(60)
 
 application.go()
 
+viztask.schedule(application.experiment)
