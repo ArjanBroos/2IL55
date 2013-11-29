@@ -30,7 +30,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			d = (math.sin(t[0]) + 1.0) / 2.0
 			angle = startAngle + d * (endAngle - startAngle)
 			object.setEuler([90,0,angle])
-			t[0] += 0.03
+			t[0] += 0.07
 		
 		# Add axes
 		nrAxes = 8
