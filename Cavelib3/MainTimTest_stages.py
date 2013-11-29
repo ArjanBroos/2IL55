@@ -103,11 +103,13 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			instructions.setText("Go to the duck, try to evade the axes.")
 			instructions.runAction(DelayHide)
 			
-			elapsedTime = viz.tick() - startTime
-			elapsedTime = str(round(elapsedTime,2))
 			
 			# When finished
 			yield vizproximity.waitEnter(duckSensor)
+			
+			elapsedTime = viz.tick() - startTime
+			elapsedTime = str(round(elapsedTime,2))
+			
 			instructions.runAction(Show)
 			yayString = "Thank you for your participation.\nYou hit the axes this many times: " + str(axesHit[0])
 			for i in range(1, nrAxes):
