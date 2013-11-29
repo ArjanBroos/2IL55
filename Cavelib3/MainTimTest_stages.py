@@ -48,7 +48,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		axest = []
 		for i in range(nrAxes):
 			axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
-			axes[i].setPosition([i*(2800/nrAxes),745,325], viz.REL_LOCAL)
+			axes[i].setPosition([300+i*(6600/nrAxes),745,325], viz.REL_LOCAL)
 			axes[i].setScale(225,225,325)
 			axes[i].center(0,4.5,0)
 			axest.append([float(i)])
@@ -57,7 +57,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		# Add ducky
 		newduck = viz.addAvatar('duck.cfg')
 		newduck.setScale([170,170,170])
-		newduck.setPosition([3700,65,325],viz.REL_LOCAL)
+		newduck.setPosition([7200,65,325],viz.REL_LOCAL)
 		newduck.setEuler([-90,0,0])
 
 		# Add proximity sensors
@@ -124,12 +124,12 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		vizact.onkeydown('g',manager.setDebug,viz.TOGGLE)  
 		
 		self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
-		self.worldModel.setScale(1,.3,1.5)
+		self.worldModel.setScale(2,.3,1.5)
 		
 		
 	def experiment(self):
 		yield viztask.waitTime(1)
-		yield self.stageAxes(4)
+		yield self.stageAxes(10)
 		#yield self.stageAxes(6)
 		#yield self.stageAxes(8)
 		#yield self.stageAxes(10)
