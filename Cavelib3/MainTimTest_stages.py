@@ -126,11 +126,11 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		
 	def experiment(self):
-		yield viztask.waitTime(5)
+		yield viztask.waitTime(1)
 		yield self.stageAxes(4)
-		yield self.stageAxes(6)
-		yield self.stageAxes(8)
-		yield self.stageAxes(10)
+		#yield self.stageAxes(6)
+		#yield self.stageAxes(8)
+		#yield self.stageAxes(10)
 		
 	def updateObjects(self,e):
 		"""Set the world poses of the objects
