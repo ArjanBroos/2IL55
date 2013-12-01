@@ -27,12 +27,14 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		skybox.texture(sky)
 		
 		self.use_keyboard = use_keyboard #store if we want to use the keyboard
-		self.time = 0.0 #note that to 0.0 is important because it is a double precision floating point number
+		#self.time = 0.0 #note that to 0.0 is important because it is a double precision floating point number
 		
 		self.speed = 400.0 #--four-- meters per second
 		originTracker = self.cavelib.getOriginTracker()
 		originTracker.setPosition([-100,100,200],viz.REL_LOCAL)
 		self.yaw = 90
+		self.startSet=0
+		self.joystickpressed=0
 		
 	def stageAxes(self, NAxes):
 		# Function for swinging the axes
@@ -44,21 +46,21 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		# Add axes
 		nrAxes = NAxes
-		axes = []
-		axest = []
+		self.axes = []
+		self.axest = []
 		for i in range(nrAxes):
-			axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
-			axes[i].setPosition([300+i*(6600/nrAxes),745,325], viz.REL_LOCAL)
-			axes[i].setScale(225,225,325)
-			axes[i].center(0,4.5,0)
-			axest.append([float(i)])
-			vizact.ontimer(0.03, swing, axes[i], axest[i], 120, 240)
+			self.axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
+			self.axes[i].setPosition([300+i*(6600/nrAxes),745,325], viz.REL_LOCAL)
+			self.axes[i].setScale(225,225,325)
+			self.axes[i].center(0,4.5,0)
+			self.axest.append([float(i)])
+			vizact.ontimer(0.03, swing, self.axes[i], self.axest[i], 120, 240)
 		
 		# Add ducky
-		newduck = viz.addAvatar('duck.cfg')
-		newduck.setScale([170,170,170])
-		newduck.setPosition([7200,65,325],viz.REL_LOCAL)
-		newduck.setEuler([-90,0,0])
+		self.newduck = viz.addAvatar('duck.cfg')
+		self.newduck.setScale([170,170,170])
+		self.newduck.setPosition([7200,65,325],viz.REL_LOCAL)
+		self.newduck.setEuler([-90,0,0])
 
 		# Add proximity sensors
 		manager = vizproximity.Manager()
@@ -66,73 +68,99 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		manager.addTarget(target)
 		sensors = []
 		for i in range(nrAxes):
-			sensors.append(vizproximity.addBoundingBoxSensor(axes[i]))
+			sensors.append(vizproximity.addBoundingBoxSensor(self.axes[i]))
 			manager.addSensor(sensors[i])
-		duckSensor = vizproximity.addBoundingBoxSensor(newduck,scale=(2.5,2.5,2.5))
+		duckSensor = vizproximity.addBoundingBoxSensor(self.newduck,scale=(2.5,2.5,2.5))
 		manager.addSensor(duckSensor)
 		
 		# Boolean variables to store trial results
-		axesHit = []
+		self.axesHit = []
 		for i in range(nrAxes):
-			axesHit.append(0)
+			self.axesHit.append(0)
 		
 		# Called when we enter a proximity
 		def EnterProximity(e):
 			for i in range(nrAxes):
 				if e.sensor == sensors[i]:
-					axesHit[i] += 1
-					print "Hit axe #" + str(i) + " " + str(axesHit[i]) + " times!"
+					self.axesHit[i] += 1
+					print "Hit axe #" + str(i) + " " + str(self.axesHit[i]) + " times!"
 		
 		manager.onEnter(None,EnterProximity)
 		
 		#Add info panel to display messages to participant
-		instructions = vizinfo.InfoPanel(icon=False,key=None)
+		self.instructions = vizinfo.InfoPanel(icon=False,key=None)
 		
-		#The following task directs the user where to go and waits until the user reaches each destination.
-		def destinationsTask():
-
-			# Action for hiding/showing text
-			DelayHide = vizact.sequence( vizact.waittime(8), vizact.method.visible(False) )
-			Show = vizact.method.visible(True)
-			
-			#instructions.setText("Reach the duck."+str(self.time))
-			
-			startTime = viz.tick()
-			
-			yield viztask.waitTime(5) 
-			instructions.setText("Go to the duck, try to evade the axes.")
-			instructions.runAction(DelayHide)
-			
-			
-			# When finished
-			yield vizproximity.waitEnter(duckSensor)
-			
-			elapsedTime = viz.tick() - startTime
-			elapsedTime = str(round(elapsedTime,2))
-			
-			instructions.runAction(Show)
-			yayString = "Thank you for your participation.\nYou hit the axes this many times: " + str(axesHit[0])
-			for i in range(1, nrAxes):
-				yayString += ", " + str(axesHit[i])
-			yayString += ".\nTime is: " + str(elapsedTime)
-			instructions.setText(yayString)
-			#Show results of experiment
-			print yayString
-
-		viztask.schedule(destinationsTask())
-		   
 		vizact.onkeydown('g',manager.setDebug,viz.TOGGLE)  
 		
-		self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
-		self.worldModel.setScale(2,.3,1.5)
+		# Action for hiding/showing text
+		DelayHide = vizact.sequence( vizact.waittime(8), vizact.method.visible(False) )
+		Show = vizact.method.visible(True)
+		
+		#instructions.setText("Reach the duck."+str(self.time))
+		
+		self.startTime = viz.tick()
+		
+		yield viztask.waitTime(5)
+		self.instructions.setText("Go to the duck, try to evade the axes.")
+		self.instructions.runAction(DelayHide)
+		
+		
+		# When finished
+		yield vizproximity.waitEnter(duckSensor)
+		
+		self.elapsedTime = viz.tick() - self.startTime
+		self.elapsedTime = str(round(self.elapsedTime,2))
+		
+		self.instructions.runAction(Show)
+		yayString = "Thank you for your participation.\nYou hit the axes this many times: " + str(self.axesHit[0])
+		for i in range(1, nrAxes):
+			yayString += ", " + str(self.axesHit[i])
+		yayString += ".\nTime is: " + str(self.elapsedTime)
+		self.instructions.setText(yayString)
+		#Show results of experiment
+		print yayString
 		
 		
 	def experiment(self):
+		self.loadScene()
 		yield viztask.waitTime(1)
+		yield self.stageAxes(4)
+		print "Stage 1"
+		self.deleteScene()
+		yield viztask.waitTime(3)
+		
+		self.returnToStart()
+		yield self.stageAxes(6)
+		print "Stage 2"
+		self.deleteScene()
+		yield viztask.waitTime(3)
+		
+		self.returnToStart()
+		yield self.stageAxes(8)
+		print "Stage 3"
+		self.deleteScene()
+		yield viztask.waitTime(3)
+		
+		self.returnToStart()
 		yield self.stageAxes(10)
-		#yield self.stageAxes(6)
-		#yield self.stageAxes(8)
-		#yield self.stageAxes(10)
+		print "Stage 4"
+		self.deleteScene()
+		yield viztask.waitTime(3)
+		
+	def returnToStart(self):
+		originTracker = self.cavelib.getOriginTracker()
+		originTracker.setPosition([-100,100,200])
+		self.yaw = 90
+		
+	def loadScene(self):
+		self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
+		self.worldModel.setScale(2,.3,1.5)
+		
+	def deleteScene(self):
+		for axe in self.axes:
+			axe.remove()
+		self.newduck.remove()
+		self.instructions.remove()
 		
 	def updateObjects(self,e):
 		"""Set the world poses of the objects
@@ -214,6 +242,9 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		This function can be omitted.
 		If this function is omitted, the wiimote will always be used.
 		"""
+		
+		# Warning: this function is called using polling!
+		
 		if self.use_keyboard:
 			result = [0.0,0.0,0.0]
 			
