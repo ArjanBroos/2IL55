@@ -39,7 +39,8 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		self.speed = 400.0 #--four-- meters per second
 		originTracker = self.cavelib.getOriginTracker()
-		originTracker.setPosition([-100,100,200],viz.REL_LOCAL)
+		#originTracker.setPosition([-100,100,0],viz.REL_LOCAL)
+		self.returnToStart()
 		self.yaw = 90
 		self.startSet=0
 		self.joystickpressed=0
@@ -58,16 +59,14 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.axest = []
 		for i in range(nrAxes):
 			self.axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
-			self.axes[i].setPosition([300+i*(6600/nrAxes),745,325], viz.REL_LOCAL)
-			self.axes[i].setScale(225,225,325)
-			self.axes[i].center(0,4.5,0)
+			self.axes[i].setPosition([300+i*(6600/nrAxes),750,0], viz.REL_LOCAL)
 			self.axest.append([float(i)])
 			vizact.ontimer(0.03, swing, self.axes[i], self.axest[i], 120, 240)
 		
 		# Add ducky
 		self.newduck = viz.addAvatar('duck.cfg')
 		self.newduck.setScale([170,170,170])
-		self.newduck.setPosition([7200,65,325],viz.REL_LOCAL)
+		self.newduck.setPosition([7200,0,0],viz.REL_LOCAL)
 		self.newduck.setEuler([-90,0,0])
 
 		# Add proximity sensors
@@ -157,12 +156,12 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 	def returnToStart(self):
 		originTracker = self.cavelib.getOriginTracker()
-		originTracker.setPosition([-100,100,200])
+		originTracker.setPosition([0,75,0])
 		self.yaw = 90
 		
 	def loadScene(self):
 		self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
-		self.worldModel.setScale(2,.3,1.5)
+		#self.worldModel.setScale(2,.3,1.5)
 		
 	def deleteScene(self):
 		for axe in self.axes:
@@ -262,11 +261,11 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			if viz.iskeydown('d'): 
 				result[0] += 1.0
 				
-			if viz.iskeydown('q'): 
-				result[1] -= 1.0
+			#if viz.iskeydown('q'): 
+				#result[1] -= 1.0
 				
-			if viz.iskeydown('e'): 
-				result[1] += 1.0
+			#if viz.iskeydown('e'): 
+				#result[1] += 1.0
 				
 			if viz.iskeydown('s'): 
 				result[2] -= 1.0
