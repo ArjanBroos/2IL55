@@ -257,6 +257,7 @@ application = CustomCaveApplication(use_keyboard=True, desktop_mode=True) #boole
 
 viz.setMultiSample(4)
 viz.MainWindow.fov(60)
+viz.MainView.getHeadLight().disable()
 #viz.collision(viz.ON)
 
 application.go()
