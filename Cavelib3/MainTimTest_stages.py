@@ -20,10 +20,10 @@ class CustomCaveApplication(caveapp.CaveApplication):
 	def __init__(self,use_keyboard = True, desktop_mode = False):
 		
 		caveapp.CaveApplication.__init__(self,desktop_mode) #call constructor of super class, you have to do this explicitly in Python		
-		self.wand = vizshape.addAxes() #load axis model to represent the wand (WALL FFS!)
+		#self.wand = vizshape.addAxes() #load axis model to represent the wand (WALL FFS!)
 		
 		# Add skybox
-		sky = viz.add(viz.ENVIRONMENT_MAP,'hell/necros_hell.jpg')
+		sky = viz.add(viz.ENVIRONMENT_MAP,'alien/jajalien1.jpg')
 		skybox = viz.add('skydome.dlc')
 		skybox.texture(sky)
 		
@@ -32,7 +32,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		dummy = viz.addLight()
 		light = viz.addLight()
 		light.position(0, 0, 0)
-		light.color([0.8, 0.8, 0.8])
+		light.color([0.8, 1, 0.8])
 		
 		self.use_keyboard = use_keyboard #store if we want to use the keyboard
 		#self.time = 0.0 #note that to 0.0 is important because it is a double precision floating point number
@@ -190,7 +190,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		#set the wand (i.e. one of the trackers NOT the wiimote)		
 		#the wand is viewed as a coordinate system
-		self.wand.setMatrix(self.cavelib.localMatrixToWorld(self.cavelib.getWandMatrix()))
+		#self.wand.setMatrix(self.cavelib.localMatrixToWorld(self.cavelib.getWandMatrix()))
 		
 	def preUpdate(self,e):
 		"""This function is executed before the updates are done."""
