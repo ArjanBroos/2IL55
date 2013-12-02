@@ -22,9 +22,17 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		caveapp.CaveApplication.__init__(self,desktop_mode) #call constructor of super class, you have to do this explicitly in Python		
 		self.wand = vizshape.addAxes() #load axis model to represent the wand (WALL FFS!)
 		
+		# Add skybox
 		sky = viz.add(viz.ENVIRONMENT_MAP,'hell/necros_hell.jpg')
 		skybox = viz.add('skydome.dlc')
 		skybox.texture(sky)
+		
+		# First light added seems to be ignored....
+		# Add lighting
+		dummy = viz.addLight()
+		light = viz.addLight()
+		light.position(0, 0, 0)
+		light.color([0.8, 0.8, 0.8])
 		
 		self.use_keyboard = use_keyboard #store if we want to use the keyboard
 		#self.time = 0.0 #note that to 0.0 is important because it is a double precision floating point number
@@ -290,7 +298,6 @@ viz.setMultiSample(4)
 viz.MainWindow.fov(60)
 viz.MainView.getHeadLight().disable()
 #viz.collision(viz.ON)
-
 application.go()
 
 viztask.schedule(application.experiment)
