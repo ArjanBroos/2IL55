@@ -45,13 +45,15 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.startSet=0
 		self.joystickpressed=0
 		
-	def stageAxes(self, NAxes):
+		vizact.onkeydown(' ', viz.setDebugSound3D, viz.TOGGLE)
+		
+	def stageAxes(self, NAxes, relSpeed):
 		# Function for swinging the axes
 		def swing(object, t, startAngle, endAngle):
 			d = (math.sin(t[0]) + 1.0) / 2.0
 			angle = startAngle + d * (endAngle - startAngle)
 			object.setEuler([90,0,angle])
-			t[0] += 0.03
+			t[0] += 0.03 * relSpeed
 		
 		# Add axes
 		nrAxes = NAxes
@@ -61,6 +63,12 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			self.axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
 			self.axes[i].setPosition([300+i*(6600/nrAxes),750,0], viz.REL_LOCAL)
 			self.axest.append([float(i)])
+			
+			sound_node = viz.addGroup(pos=[300+i*(6600/nrAxes),75,0])
+			swoosh = sound_node.playsound('swoosh.wav')
+			swoosh.minmax(0, 20)
+			vizact.ontimer(3.14/relSpeed, swoosh.play)
+			
 			vizact.ontimer(0.03, swing, self.axes[i], self.axest[i], 120, 240)
 		
 		# Add ducky
@@ -131,25 +139,25 @@ class CustomCaveApplication(caveapp.CaveApplication):
 	def experiment(self):
 		self.loadScene()
 		yield viztask.waitTime(1)
-		yield self.stageAxes(4)
+		yield self.stageAxes(4, 1)
 		print "Stage 1"
 		self.deleteScene()
 		yield viztask.waitTime(3)
 		
 		self.returnToStart()
-		yield self.stageAxes(6)
+		yield self.stageAxes(6, 1.5)
 		print "Stage 2"
 		self.deleteScene()
 		yield viztask.waitTime(3)
 		
 		self.returnToStart()
-		yield self.stageAxes(8)
+		yield self.stageAxes(8, 2.5)
 		print "Stage 3"
 		self.deleteScene()
 		yield viztask.waitTime(3)
 		
 		self.returnToStart()
-		yield self.stageAxes(10)
+		yield self.stageAxes(10, 4)
 		print "Stage 4"
 		self.deleteScene()
 		yield viztask.waitTime(3)
