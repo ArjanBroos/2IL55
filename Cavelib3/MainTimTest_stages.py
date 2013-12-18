@@ -96,9 +96,47 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.axesHit = []
 		for i in range(nrAxes):
 			self.axesHit.append(0)
+			
+#		for i in range(nrAxes):
+#			sensors.append(vizproximity.addBoundingBoxSensor(self.axes[i]))
+#			manager.addSensor(sensors[i])
+		
+		self.holes = []
+		i=0
+		# Add ducky
+		self.holes.append(viz.addAvatar('duck.cfg'))
+		self.holes[i].setScale([50,50,50])
+		self.holes[i].setPosition([695,0,95],viz.REL_LOCAL)
+		self.holes[i].setEuler([-90,0,0])
+		
+		i+=1
+		self.holes.append(viz.addAvatar('duck.cfg'))
+		self.holes[i].setScale([50,50,50])
+		self.holes[i].setPosition([695,0,-98],viz.REL_LOCAL)
+		self.holes[i].setEuler([-90,0,0])
+		
+		i+=1
+		self.holes.append(viz.addAvatar('duck.cfg'))
+		self.holes[i].setScale([50,50,50])
+		self.holes[i].setPosition([1331,0,-1.5],viz.REL_LOCAL)
+		self.holes[i].setEuler([-90,0,0])
+		
+		i+=1
+		self.holes.append(viz.addAvatar('duck.cfg'))
+		self.holes[i].setScale([50,50,50])
+		self.holes[i].setPosition([1957,0,98],viz.REL_LOCAL)
+		self.holes[i].setEuler([-90,0,0])
+		
+		plantSensor = vizproximity.Sensor(vizproximity.Box([30,30,30],center=[300,0,20]),source=viz.Matrix.translate(695,75,95))
+		manager.addSensor(plantSensor)
 		
 		# Called when we enter a proximity
 		def EnterProximity(e):
+			for i in range(nrAxes):
+				if e.sensor == sensors[i]:
+					self.axesHit[i] += 1
+					print "Hit axe #" + str(i) + " " + str(self.axesHit[i]) + " times!"
+					
 			for i in range(nrAxes):
 				if e.sensor == sensors[i]:
 					self.axesHit[i] += 1
@@ -198,7 +236,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		axeSpeed = 1
 		stage = 0
 		yield self.recordHeadTracking(stage)
-		yield self.setStage(stage,nAxes,axeSpeed,False,waittime)
+		yield self.setStage(stage,nAxes,axeSpeed,True,waittime)
 		nAxes = 5
 		
 		stage = 1
@@ -226,6 +264,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		stage = 6
 		yield self.recordHeadTracking(stage)
 		yield self.setStage(stage,nAxes,axeSpeed,True,waittime)
+		
 		
 	def preUpdate(self,e):
 		"""This function is executed before the updates are done."""
