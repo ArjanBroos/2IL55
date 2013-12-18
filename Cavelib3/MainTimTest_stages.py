@@ -159,8 +159,25 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		for swoosh in self.swoosh:
 			swoosh.remove()
 		
+	def recordHeadTracking(self):
+		tracking_data = open('tracking_1.txt', 'a')  #'+str(subject)+'
+		
+		#Get the tracking data.
+		def getData():
+			orientation = viz.MainView.getEuler()
+			position = viz.MainView.getPosition()
+			#Make a string out of the data.
+			data = str(orientation) + '\t' + str(position) + '\n'  #str(subject) + '\t' + 
+			#Write it to the tracking file.
+			tracking_data.write(data)
+
+		vizact.ontimer(1, getData)
+		
+		
 	def experiment(self):
 		waittime = 0.5
+		
+		yield self.recordHeadTracking()
 		
 		yield self.setStage(0,0,1,False,waittime)
 		
