@@ -10,6 +10,7 @@ import vizact
 import vizinfo
 import vizproximity 
 import viztask
+from time import gmtime, strftime
 
 ################################################################
 #Code, with respect to she functionality should be in here
@@ -168,7 +169,8 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			swoosh.remove()
 		
 	def recordHeadTracking(self):
-		self.tracking_data = open('tracking_1.txt', 'a')  #'+str(subject)+'
+		self.tracking_data = open('tracking.txt', 'a')  #'+str(subject)+'
+		self.tracking_data.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+"\n")
 		
 		#Get the tracking data.
 		def getData():
