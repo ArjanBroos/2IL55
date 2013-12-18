@@ -138,9 +138,9 @@ class CustomCaveApplication(caveapp.CaveApplication):
 	def setStage(self,stage,NAxes,relSpeed,holes,waittime):
 		print "Stage "+str(stage)
 		if holes == True:
-			self.worldModel = viz.add('bridgeHoles.OSGB')
+			self.bridge = viz.add('bridgeHoles.OSGB')
 		else:
-			self.worldModel = viz.add('bridge.OSGB')
+			self.bridge = viz.add('bridge.OSGB')
 		yield self.stageAxes(NAxes,relSpeed)
 		
 		yield self.deleteScene()
@@ -156,6 +156,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		for axe in self.axes:
 			axe.remove()
 		self.newduck.remove()
+		self.bridge.remove()
 		self.instructions.remove()
 		for swoosh in self.swoosh:
 			swoosh.remove()
