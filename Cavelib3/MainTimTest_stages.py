@@ -144,7 +144,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		else:
 			self.bridge = viz.add('bridge.OSGB')
 		
-		self.tracking_data.write("Stage "+stage+"\n")
+		self.tracking_data.write("Stage "+str(stage)+"\n")
 		yield self.activateHeadTracking(True)
 		yield self.stageAxes(NAxes,relSpeed)
 		yield self.activateHeadTracking(False)
