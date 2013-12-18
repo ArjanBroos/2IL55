@@ -134,6 +134,8 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		#Show results of experiment
 		print yayString
 		
+	def activateHeadTracking(self, activate):
+		print ""
 		
 	def setStage(self,stage,NAxes,relSpeed,holes,waittime):
 		print "Stage "+str(stage)
@@ -141,7 +143,10 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			self.bridge = viz.add('bridgeHoles.OSGB')
 		else:
 			self.bridge = viz.add('bridge.OSGB')
+		
+		yield self.activateHeadTracking(True)
 		yield self.stageAxes(NAxes,relSpeed)
+		yield self.activateHeadTracking(False)
 		
 		yield self.deleteScene()
 		yield viztask.waitTime(waittime)
@@ -173,7 +178,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			#Write it to the tracking file.
 			tracking_data.write(data)
 
-		vizact.ontimer(1, getData)
+		self.recording = vizact.ontimer(1, getData)
 		
 		
 	def experiment(self):
