@@ -162,25 +162,21 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			swoosh.remove()
 		
 	def experiment(self):
-		waittime = 2
+		waittime = 1
 		
 		yield self.setStage(0,0,1,False,waittime)
 		
-		yield self.setStage(1,4,1,False,waittime)
+		yield self.setStage(1,5,1,False,waittime)
 		
-		yield self.setStage(2,6,1.5,False,waittime)
+		yield self.setStage(2,5,1,True,waittime)
 		
-		yield self.setStage(3,8,2.5,False,waittime)
+		yield self.setStage(3,5,2,False,waittime)
+	
+		yield self.setStage(4,5,2,True,waittime)
 		
-		yield self.setStage(4,10,4,False,waittime)
+		yield self.setStage(5,5,3,False,waittime)
 		
-		yield self.setStage(5,4,1,True,waittime)
-		
-		yield self.setStage(6,6,1.5,True,waittime)
-		
-		yield self.setStage(7,8,2.5,True,waittime)
-		
-		yield self.setStage(8,10,4,True,waittime)
+		yield self.setStage(6,5,3,True,waittime)
 		
 	def updateObjects(self,e):
 		"""Set the world poses of the objects
