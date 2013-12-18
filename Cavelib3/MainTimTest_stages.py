@@ -59,15 +59,16 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		nrAxes = NAxes
 		self.axes = []
 		self.axest = []
+		self.swoosh = []
 		for i in range(nrAxes):
 			self.axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
 			self.axes[i].setPosition([300+i*(6600/nrAxes),750,0], viz.REL_LOCAL)
 			self.axest.append([float(i)])
 			
 			sound_node = viz.addGroup(pos=[300+i*(6600/nrAxes),75,0])
-			swoosh = sound_node.playsound('swoosh.wav')
-			swoosh.minmax(0, 20)
-			vizact.ontimer(3.14/relSpeed, swoosh.play)
+			self.swoosh.append(sound_node.playsound('swoosh.wav'))
+			self.swoosh[i].minmax(0, 20)
+			vizact.ontimer(3.14/relSpeed, self.swoosh[i].play)
 			
 			vizact.ontimer(0.03, swing, self.axes[i], self.axest[i], 120, 240)
 		
@@ -115,52 +116,37 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		self.startTime = viz.tick()
 		
-		yield viztask.waitTime(5)
-		self.instructions.setText("Go to the duck, try to evade the axes.")
-		self.instructions.runAction(DelayHide)
 		
-		
+		print "done with scene, awaiting duck"
 		# When finished
 		yield vizproximity.waitEnter(duckSensor)
 		
 		self.elapsedTime = viz.tick() - self.startTime
 		self.elapsedTime = str(round(self.elapsedTime,2))
 		
-		self.instructions.runAction(Show)
-		yayString = "Thank you for your participation.\nYou hit the axes this many times: " + str(self.axesHit[0])
+		#self.instructions.runAction(Show)
+		yayString = "Thank you for your participation.\nYou hit the axes this many times: "
+		if NAxes>0: yayString += str(self.axesHit[0])
 		for i in range(1, nrAxes):
 			yayString += ", " + str(self.axesHit[i])
 		yayString += ".\nTime is: " + str(self.elapsedTime)
-		self.instructions.setText(yayString)
+		#self.instructions.setText(yayString)
 		#Show results of experiment
 		print yayString
 		
 		
-	def experiment(self):
-		self.loadScene()
-		yield viztask.waitTime(1)
-		yield self.stageAxes(4, 1)
-		print "Stage 1"
-		self.deleteScene()
-		yield viztask.waitTime(3)
+	def setStage(self,stage,NAxes,relSpeed,holes,waittime):
+		print "Stage "+str(stage)
+		if holes == True:
+			self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
+		else:
+			self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
+			
+		yield self.stageAxes(NAxes,relSpeed)
 		
-		self.returnToStart()
-		yield self.stageAxes(6, 1.5)
-		print "Stage 2"
-		self.deleteScene()
-		yield viztask.waitTime(3)
-		
-		self.returnToStart()
-		yield self.stageAxes(8, 2.5)
-		print "Stage 3"
-		self.deleteScene()
-		yield viztask.waitTime(3)
-		
-		self.returnToStart()
-		yield self.stageAxes(10, 4)
-		print "Stage 4"
-		self.deleteScene()
-		yield viztask.waitTime(3)
+		yield self.deleteScene()
+		yield viztask.waitTime(waittime)
+		yield self.returnToStart()
 		
 	def returnToStart(self):
 		originTracker = self.cavelib.getOriginTracker()
@@ -176,6 +162,29 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			axe.remove()
 		self.newduck.remove()
 		self.instructions.remove()
+		for swoosh in self.swoosh:
+			swoosh.remove()
+		
+	def experiment(self):
+		waittime = 2
+		
+		yield self.setStage(0,0,1,False,waittime)
+		
+		yield self.setStage(1,4,1,False,waittime)
+		
+		yield self.setStage(2,6,1.5,False,waittime)
+		
+		yield self.setStage(3,8,2.5,False,waittime)
+		
+		yield self.setStage(4,10,4,False,waittime)
+		
+		yield self.setStage(5,4,1,True,waittime)
+		
+		yield self.setStage(6,6,1.5,True,waittime)
+		
+		yield self.setStage(7,8,2.5,True,waittime)
+		
+		yield self.setStage(8,10,4,True,waittime)
 		
 	def updateObjects(self,e):
 		"""Set the world poses of the objects
