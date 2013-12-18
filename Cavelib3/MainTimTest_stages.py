@@ -153,10 +153,6 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		originTracker.setPosition([0,75,0])
 		self.yaw = 90
 		
-	def loadScene(self):
-		self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
-		#self.worldModel.setScale(2,.3,1.5)
-		
 	def deleteScene(self):
 		for axe in self.axes:
 			axe.remove()
