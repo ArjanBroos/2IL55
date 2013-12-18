@@ -56,16 +56,18 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			t[0] += 0.03 * relSpeed
 		
 		# Add axes
+		beginPosition = 400
+		endPosition = 6600
 		nrAxes = NAxes
 		self.axes = []
 		self.axest = []
 		self.swoosh = []
 		for i in range(nrAxes):
 			self.axes.append(viz.addChild('axe.OSGB', cache=viz.CACHE_CLONE))
-			self.axes[i].setPosition([300+i*(6600/nrAxes),750,0], viz.REL_LOCAL)
+			self.axes[i].setPosition([beginPosition+i*(endPosition/nrAxes),750,0], viz.REL_LOCAL)
 			self.axest.append([float(i)])
 			
-			sound_node = viz.addGroup(pos=[300+i*(6600/nrAxes),75,0])
+			sound_node = viz.addGroup(pos=[beginPosition+i*(endPosition/nrAxes),75,0])
 			self.swoosh.append(sound_node.playsound('swoosh.wav'))
 			self.swoosh[i].minmax(0, 20)
 			vizact.ontimer(3.14/relSpeed, self.swoosh[i].play)
@@ -113,30 +115,26 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		Show = vizact.method.visible(True)
 		
 		#instructions.setText("Reach the duck."+str(self.time))
-		
 		self.startTime = viz.tick()
 		
 		
 		print "done with scene, awaiting duck"
+		print "----------Begin stage "+str(self.stage)+"----------"
 		# When finished
 		yield vizproximity.waitEnter(duckSensor)
 		
 		self.elapsedTime = viz.tick() - self.startTime
 		self.elapsedTime = str(round(self.elapsedTime,2))
-		
-		#self.instructions.runAction(Show)
-		yayString = "Thank you for your participation.\nYou hit the axes this many times: "
+		yayString = "Total number of axes hit: "
 		if NAxes>0: yayString += str(self.axesHit[0])
 		for i in range(1, nrAxes):
 			yayString += ", " + str(self.axesHit[i])
 		yayString += ".\nTime is: " + str(self.elapsedTime)
-		#self.instructions.setText(yayString)
-		#Show results of experiment
 		print yayString
-		
+		print "----------End stage----------"
 		
 	def setStage(self,stage,NAxes,relSpeed,holes,waittime):
-		print "Stage "+str(stage)
+		self.stage = stage
 		if holes == True:
 			self.bridge = viz.add('bridgeHoles.OSGB')
 		else:
@@ -162,7 +160,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			swoosh.remove()
 		
 	def experiment(self):
-		waittime = 1
+		waittime = 0.5
 		
 		yield self.setStage(0,0,1,False,waittime)
 		
@@ -177,28 +175,6 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		yield self.setStage(5,5,3,False,waittime)
 		
 		yield self.setStage(6,5,3,True,waittime)
-		
-	def updateObjects(self,e):
-		"""Set the world poses of the objects
-		
-		Especially those which are defined in the CAVE coordinate system.
-		Since this function is called after the CAVE is moved (see movement of CAVE).
-		"""
-		
-		#the delta time that has passed
-		#you can use this value to advance your simulation
-	#	elapsed = e.elapsed 
-		
-		#keep track of time	
-		#this is just some time measurement
-		#vizard probably has some clock function
-		#there is no reason to prefer one time variable/function over the other
-		#there is also no reason why the statement below is in this function and not in preUpdate
-	#	self.time += elapsed
-		
-		#set the wand (i.e. one of the trackers NOT the wiimote)		
-		#the wand is viewed as a coordinate system
-		#self.wand.setMatrix(self.cavelib.localMatrixToWorld(self.cavelib.getWandMatrix()))
 		
 	def preUpdate(self,e):
 		"""This function is executed before the updates are done."""
