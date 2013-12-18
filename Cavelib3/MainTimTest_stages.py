@@ -174,6 +174,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		def getData():
 			orientation = viz.MainView.getEuler()
 			orientation[0] += 90
+			orientation[1] += -90
 			position = viz.MainView.getPosition()
 			#Make a string out of the data.
 			data = str(orientation) + '\t' + str(position) + '\n'  #str(subject) + '\t' + 
