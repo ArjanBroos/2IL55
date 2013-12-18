@@ -85,11 +85,11 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		manager = vizproximity.Manager()
 		target = vizproximity.Target(viz.MainView)
 		manager.addTarget(target)
-		sensors = []
+		self.axesensors = []
 		for i in range(nrAxes):
-			sensors.append(vizproximity.addBoundingBoxSensor(self.axes[i]))
-			manager.addSensor(sensors[i])
-		duckSensor = vizproximity.addBoundingBoxSensor(self.newduck,scale=(2.5,2.5,2.5))
+			self.axesensors.append(vizproximity.addBoundingBoxSensor(self.axes[i]))
+			manager.addSensor(self.axesensors[i])
+		duckSensor = vizproximity.addBoundingBoxSensor(self.newduck,scale=(2.5,2.5,3))
 		manager.addSensor(duckSensor)
 		
 		# Boolean variables to store trial results
@@ -101,34 +101,30 @@ class CustomCaveApplication(caveapp.CaveApplication):
 #			sensors.append(vizproximity.addBoundingBoxSensor(self.axes[i]))
 #			manager.addSensor(sensors[i])
 		
-		self.holes = []
-		i=0
-		# Add ducky
-#		self.holes.append(viz.addAvatar('duck.cfg'))
-#		self.holes[i].setScale([50,50,50])
-#		self.holes[i].setPosition([695,0,95],viz.REL_LOCAL)
-#		self.holes[i].setEuler([-90,0,0])
-#		
-#		i+=1
-		self.holes.append(viz.addAvatar('duck.cfg'))
-		self.holes[i].setScale([50,50,50])
-		self.holes[i].setPosition([695,0,-98],viz.REL_LOCAL)
-		self.holes[i].setEuler([-90,0,0])
+		holeCoordinates = [
+		[695,0,95],
+		[695,0,-98],
+		[1331,0,-1.5],
+		[1957,0,98],
+		[2443,0,-5],
+		[2927,0,-108],
+		[3716,0,-55],
+		[4666,0,49],
+		[5465,0,95],
+		[5465,0,-104],
+		[5951,0,-7]]
 		
-		i+=1
-		self.holes.append(viz.addAvatar('duck.cfg'))
-		self.holes[i].setScale([50,50,50])
-		self.holes[i].setPosition([1331,0,-1.5],viz.REL_LOCAL)
-		self.holes[i].setEuler([-90,0,0])
+		self.holesensor = []
+		k=-1
+		for hole in holeCoordinates:
+			k+=1
+			self.holesensor.append(vizproximity.Sensor(vizproximity.Box([50,300,100],center=hole),source=viz.Matrix.translate(0,0,0)))
+			manager.addSensor(self.holesensor[k])
+			
 		
-		i+=1
-		self.holes.append(viz.addAvatar('duck.cfg'))
-		self.holes[i].setScale([50,50,50])
-		self.holes[i].setPosition([1957,0,98],viz.REL_LOCAL)
-		self.holes[i].setEuler([-90,0,0])
-		
-		plantSensor = vizproximity.Sensor(vizproximity.Box([30,30,30],center=[695,0,95]),source=viz.Matrix.translate(0,0,0))
-		manager.addSensor(plantSensor)
+		self.holesHit = []
+		for i in range(len(self.holesensor)):
+			self.holesHit.append(0)
 		
 		# Called when we enter a proximity
 		def EnterProximity(e):
@@ -137,10 +133,10 @@ class CustomCaveApplication(caveapp.CaveApplication):
 					self.axesHit[i] += 1
 					print "Hit axe #" + str(i) + " " + str(self.axesHit[i]) + " times!"
 					
-			for i in range(nrAxes):
-				if e.sensor == sensors[i]:
-					self.axesHit[i] += 1
-					print "Hit axe #" + str(i) + " " + str(self.axesHit[i]) + " times!"
+			for i in range(len(self.holesensor)):
+				if e.sensor == self.holesensor[i]:
+					self.holesHit[i] += 1
+					print "Hit hole #" + str(i) + " " + str(self.holesHit[i]) + " times!"
 		
 		manager.onEnter(None,EnterProximity)
 		
@@ -206,7 +202,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.instructions.remove()
 		for swoosh in self.swoosh:
 			swoosh.remove()
-		
+			
 	def recordHeadTracking(self,stage):
 		fileName = self.participant + "-" + str(stage) + ".txt"
 		self.tracking_data = open(fileName, 'a')  #'+str(subject)+'
