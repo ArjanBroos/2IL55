@@ -181,11 +181,14 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			#Write it to the tracking file.
 			self.tracking_data.write(data)
 
-		self.recording = vizact.ontimer(1, getData)
+		self.recording = vizact.ontimer(0.2, getData)
 		
 		
 	def experiment(self):
 		waittime = 0.5
+		
+		self.participant = raw_input("Participant name: ")
+		print "Participant = ", self.participant
 		
 		yield self.recordHeadTracking()
 		
