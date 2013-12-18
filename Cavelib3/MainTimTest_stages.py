@@ -172,6 +172,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		#Get the tracking data.
 		def getData():
 			orientation = viz.MainView.getEuler()
+			orientation[0] += 90
 			position = viz.MainView.getPosition()
 			#Make a string out of the data.
 			data = str(orientation) + '\t' + str(position) + '\n'  #str(subject) + '\t' + 
