@@ -104,12 +104,12 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.holes = []
 		i=0
 		# Add ducky
-		self.holes.append(viz.addAvatar('duck.cfg'))
-		self.holes[i].setScale([50,50,50])
-		self.holes[i].setPosition([695,0,95],viz.REL_LOCAL)
-		self.holes[i].setEuler([-90,0,0])
-		
-		i+=1
+#		self.holes.append(viz.addAvatar('duck.cfg'))
+#		self.holes[i].setScale([50,50,50])
+#		self.holes[i].setPosition([695,0,95],viz.REL_LOCAL)
+#		self.holes[i].setEuler([-90,0,0])
+#		
+#		i+=1
 		self.holes.append(viz.addAvatar('duck.cfg'))
 		self.holes[i].setScale([50,50,50])
 		self.holes[i].setPosition([695,0,-98],viz.REL_LOCAL)
@@ -127,7 +127,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.holes[i].setPosition([1957,0,98],viz.REL_LOCAL)
 		self.holes[i].setEuler([-90,0,0])
 		
-		plantSensor = vizproximity.Sensor(vizproximity.Box([30,30,30],center=[300,0,20]),source=viz.Matrix.translate(695,75,95))
+		plantSensor = vizproximity.Sensor(vizproximity.Box([30,30,30],center=[695,0,95]),source=viz.Matrix.translate(0,0,0))
 		manager.addSensor(plantSensor)
 		
 		# Called when we enter a proximity
