@@ -138,10 +138,9 @@ class CustomCaveApplication(caveapp.CaveApplication):
 	def setStage(self,stage,NAxes,relSpeed,holes,waittime):
 		print "Stage "+str(stage)
 		if holes == True:
-			self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
+			self.worldModel = viz.add('bridgeHoles.OSGB')
 		else:
-			self.worldModel = viz.add('bridge3.OSGB') #load a world model         bridge3.OSGB  piazza.osgb
-			
+			self.worldModel = viz.add('bridge.OSGB')
 		yield self.stageAxes(NAxes,relSpeed)
 		
 		yield self.deleteScene()
