@@ -132,6 +132,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			yayString += ", " + str(self.axesHit[i])
 		yayString += ".\nTime is: " + str(self.elapsedTime)
 		print yayString
+		self.tracking_data.write(yayString)
 		print "----------End stage----------"
 		
 	def activateHeadTracking(self, activate):
@@ -168,8 +169,9 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		for swoosh in self.swoosh:
 			swoosh.remove()
 		
-	def recordHeadTracking(self):
-		self.tracking_data = open('tracking.txt', 'a')  #'+str(subject)+'
+	def recordHeadTracking(self,stage):
+		fileName = self.participant + "-" + str(stage) + ".txt"
+		self.tracking_data = open(fileName, 'a')  #'+str(subject)+'
 		self.tracking_data.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+"\n")
 		
 		#Get the tracking data.
@@ -192,21 +194,38 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		self.participant = raw_input("Participant name: ")
 		print "Participant = ", self.participant
 		
-		yield self.recordHeadTracking()
+		nAxes = 0
+		axeSpeed = 1
+		stage = 0
+		yield self.recordHeadTracking(stage)
+		yield self.setStage(stage,nAxes,axeSpeed,False,waittime)
+		nAxes = 5
 		
-		yield self.setStage(0,0,1,False,waittime)
+		stage = 1
+		yield self.recordHeadTracking(stage)
+		yield self.setStage(stage,nAxes,axeSpeed,False,waittime)
 		
-		yield self.setStage(1,5,1,False,waittime)
+		stage = 2
+		yield self.recordHeadTracking(stage)
+		yield self.setStage(stage,nAxes,axeSpeed,True,waittime)
 		
-		yield self.setStage(2,5,1,True,waittime)
+		stage = 3
+		axeSpeed = 2
+		yield self.recordHeadTracking(stage)
+		yield self.setStage(stage,nAxes,axeSpeed,False,waittime)
 		
-		yield self.setStage(3,5,2,False,waittime)
-	
-		yield self.setStage(4,5,2,True,waittime)
+		stage = 4
+		yield self.recordHeadTracking(stage)
+		yield self.setStage(stage,nAxes,axeSpeed,True,waittime)
 		
-		yield self.setStage(5,5,3,False,waittime)
+		stage = 5
+		axeSpeed = 3
+		yield self.recordHeadTracking(stage)
+		yield self.setStage(stage,nAxes,axeSpeed,False,waittime)
 		
-		yield self.setStage(6,5,3,True,waittime)
+		stage = 6
+		yield self.recordHeadTracking(stage)
+		yield self.setStage(stage,nAxes,axeSpeed,True,waittime)
 		
 	def preUpdate(self,e):
 		"""This function is executed before the updates are done."""
