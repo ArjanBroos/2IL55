@@ -176,17 +176,21 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		def getData():
 			orientation = viz.MainView.getEuler()
 			orientation[0] += 90
+			orientation[1] += -90
 			position = viz.MainView.getPosition()
 			#Make a string out of the data.
 			data = str(orientation) + '\t' + str(position) + '\n'  #str(subject) + '\t' + 
 			#Write it to the tracking file.
 			self.tracking_data.write(data)
 
-		self.recording = vizact.ontimer(1, getData)
+		self.recording = vizact.ontimer(0.2, getData)
 		
 		
 	def experiment(self):
 		waittime = 0.5
+		
+		self.participant = raw_input("Participant name: ")
+		print "Participant = ", self.participant
 		
 		yield self.recordHeadTracking()
 		
