@@ -344,6 +344,9 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			if viz.iskeydown('w'): 
 				result[2] += 1.0
 				
+			if viz.iskeydown('p'): 
+				print self.cavelib.getOriginTracker().getPosition()
+				
 			if viz.iskeydown('r'):
 				self.speed = self.speed * 1.01
 				
