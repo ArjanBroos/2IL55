@@ -134,7 +134,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		print "----------End stage----------"
 		
 	def activateHeadTracking(self, activate):
-		print ""
+		self.recording.setEnabled(activate)
 
 		
 	def setStage(self,stage,NAxes,relSpeed,holes,waittime):
@@ -144,6 +144,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		else:
 			self.bridge = viz.add('bridge.OSGB')
 		
+		self.tracking_data.write("Stage "+stage+"\n")
 		yield self.activateHeadTracking(True)
 		yield self.stageAxes(NAxes,relSpeed)
 		yield self.activateHeadTracking(False)
@@ -167,7 +168,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			swoosh.remove()
 		
 	def recordHeadTracking(self):
-		tracking_data = open('tracking_1.txt', 'a')  #'+str(subject)+'
+		self.tracking_data = open('tracking_1.txt', 'a')  #'+str(subject)+'
 		
 		#Get the tracking data.
 		def getData():
@@ -176,7 +177,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 			#Make a string out of the data.
 			data = str(orientation) + '\t' + str(position) + '\n'  #str(subject) + '\t' + 
 			#Write it to the tracking file.
-			tracking_data.write(data)
+			self.tracking_data.write(data)
 
 		self.recording = vizact.ontimer(1, getData)
 		
