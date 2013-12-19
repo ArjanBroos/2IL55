@@ -48,7 +48,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		vizact.onkeydown(' ', viz.setDebugSound3D, viz.TOGGLE)
 		
-	def stageAxes(self, NAxes, relSpeed):
+	def stageAxes(self, NAxes, relSpeed, holes):
 		# Function for swinging the axes
 		def swing(object, t, startAngle, endAngle):
 			d = (math.sin(t[0]) + 1.0) / 2.0
@@ -129,14 +129,15 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		# Called when we enter a proximity
 		def EnterProximity(e):
 			for i in range(nrAxes):
-				if e.sensor == sensors[i]:
+				if e.sensor == self.axesensors[i]:
 					self.axesHit[i] += 1
 					print "Hit axe #" + str(i) + " " + str(self.axesHit[i]) + " times!"
-					
-			for i in range(len(self.holesensor)):
-				if e.sensor == self.holesensor[i]:
-					self.holesHit[i] += 1
-					print "Hit hole #" + str(i) + " " + str(self.holesHit[i]) + " times!"
+			
+			if holes:
+				for i in range(len(self.holesensor)):
+					if e.sensor == self.holesensor[i]:
+						self.holesHit[i] += 1
+						print "Hit hole #" + str(i) + " " + str(self.holesHit[i]) + " times!"
 		
 		manager.onEnter(None,EnterProximity)
 		
@@ -182,7 +183,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		
 		self.tracking_data.write("Stage "+str(stage)+"\n")
 		yield self.activateHeadTracking(True)
-		yield self.stageAxes(NAxes,relSpeed)
+		yield self.stageAxes(NAxes,relSpeed,holes)
 		yield self.activateHeadTracking(False)
 		
 		yield self.deleteScene()
