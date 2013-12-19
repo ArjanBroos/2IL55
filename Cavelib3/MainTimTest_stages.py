@@ -238,7 +238,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		axeSpeed = 1
 		stage = 0
 		yield self.recordHeadTracking(stage)
-		yield self.setStage(stage,nAxes,axeSpeed,True,waittime)
+		yield self.setStage(stage,nAxes,axeSpeed,False,waittime)
 		nAxes = 5
 		
 		stage = 1
