@@ -129,7 +129,7 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		# Called when we enter a proximity
 		def EnterProximity(e):
 			for i in range(nrAxes):
-				if e.sensor == self.axesensors[i]:
+				if e.sensor == sensors[i]:
 					self.axesHit[i] += 1
 					print "Hit axe #" + str(i) + " " + str(self.axesHit[i]) + " times!"
 					
