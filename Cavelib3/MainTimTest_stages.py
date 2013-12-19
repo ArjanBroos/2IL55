@@ -102,17 +102,17 @@ class CustomCaveApplication(caveapp.CaveApplication):
 #			manager.addSensor(sensors[i])
 		
 		holeCoordinates = [
-		[695,0,95],
-		[695,0,-98],
-		[1331,0,-1.5],
-		[1957,0,98],
-		[2443,0,-5],
-		[2927,0,-108],
-		[3716,0,-55],
-		[4666,0,49],
-		[5465,0,95],
-		[5465,0,-104],
-		[5951,0,-7]]
+		[755,0,95],
+		[755,0,-98],
+		[1391,0,-1.5],
+		[2017,0,98],
+		[2503,0,-5],
+		[2987,0,-108],
+		[3776,0,-55],
+		[4726,0,49],
+		[5525,0,95],
+		[5525,0,-104],
+		[6011,0,-7]]
 		
 		self.holesensor = []
 		k=-1
@@ -165,7 +165,12 @@ class CustomCaveApplication(caveapp.CaveApplication):
 		if NAxes>0: yayString += str(self.axesHit[0])
 		for i in range(1, nrAxes):
 			yayString += ", " + str(self.axesHit[i])
-		yayString += ".\nTime is: " + str(self.elapsedTime)
+		if holes:
+			yayString += ".\nTotal number of holes hit: "
+			for i in range(len(self.holesensor)):
+				yayString += ", " + str(self.holesHit[i])
+		
+		yayString += ".\nTime is: " + str(self.elapsedTime)	
 		print yayString
 		self.tracking_data.write(yayString)
 		print "----------End stage----------"
